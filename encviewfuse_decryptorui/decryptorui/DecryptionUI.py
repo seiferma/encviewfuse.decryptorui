@@ -9,8 +9,8 @@ from tkinter.filedialog import askdirectory
 from tkinter.messagebox import showerror
 from tkinter.ttk import Treeview, Scrollbar
 
-from encviewfuse.encryption.Encryption import Encryption
-from encviewfuse.encryption.VirtualFile import VirtualFile
+from deterministic_encryption_utils.encryption.Encryption import Encryption
+from deterministic_encryption_utils.encryption.VirtualFile import VirtualFile
 
 class Decryptor(object):
     
