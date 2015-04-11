@@ -11,11 +11,10 @@ deploy:
   server: https://pypi.python.org/pypi
   user: seiferma
   password:
-    secure: Ok03/5xX2YYIob5s3NaW2sxLdRvhL96auL33rgIVXln1WdIakgP991yXrEC3b6fxiQdIWoVaPXZrfc3Ttq8InfcVylGKntTk3qluG8yjgFXonGmymEpWzJ/BufLergN0zjMs6n0MasX6JMM7vJ2rRGL8maqLJTx/Jf8e4qCDNqA=
+    secure: OZcp5eYA9Xi05Q8m9XPgdBYvfdf1a2Dgz+1gVNxCs6BMOAoIfRURZfAST/zIwl3vHwMiaUl7Og7ve9MLqrDnh4R2WUI2DfvstVWd9qN5RSDo5Veua/hRiZx1yPhqS2bgGmeuS7cLe0UjhXuvDSrqOylGUzKVSYkADpjnLAaIpv8=
   on:
     tags: true
     condition: $TRAVIS_PYTHON_VERSION = '3.3'
 after_deploy:
-  - git clone https://github.com/seiferma/travis-utils.git
-  - python travis-utils/validate_pypi.py -v || exit 1
-
+- git clone https://github.com/seiferma/travis-utils.git
+- python travis-utils/validate_pypi.py -v || exit 1
