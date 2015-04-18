@@ -80,6 +80,8 @@ class Decryptor(object):
 
     def chooseFolder(self):
         dirPath = askdirectory(parent=self.root, mustexist=True)
+        if os.name == 'nt':
+            dirPath = '\\\\?\\' + os.path.normpath(dirPath)
         self.folderPath.configure(state='normal')
         self.folderPath.delete(0, len(self.folderPath.get()))
         self.folderPath.insert(0, dirPath)
@@ -198,6 +200,7 @@ class Decryptor(object):
             if os.path.isfile(encryptedFullPath):
                 encryptedVirtualFile = VirtualFile(encryptedFullPath)
                 fileSize = decryption.decryptedFileSize(encryptedVirtualFile)
+                encryptedVirtualFile.closeFileHandle()
                 identifier = self.fileBrowser.insert(parent, 'end', text=decryptedName)
             else:
                 identifier = self.fileBrowser.insert(parent, 'end', text=decryptedName)
