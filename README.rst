@@ -1,7 +1,7 @@
 encviewfuse.decryptorui
 =======================
-.. image:: https://secure.travis-ci.org/seiferma/encviewfuse.decryptorui.png
-    :target: http://travis-ci.org/seiferma/encviewfuse.decryptorui
+.. image:: https://secure.travis-ci.org/seiferma/encviewfuse_decryptorui.png
+    :target: http://travis-ci.org/seiferma/encviewfuse_decryptorui
 
 Description
 -----------
