@@ -11,6 +11,9 @@ from tkinter.ttk import Treeview, Scrollbar
 
 from deterministic_encryption_utils.encryption.Encryption import Encryption
 from deterministic_encryption_utils.encryption.VirtualFile import VirtualFile
+import re
+from encviewfuse_decryptorui.decryptorui.FilenameUtils import FilenameUtils
+from encviewfuse_decryptorui.decryptorui.SegmentedVirtualFile import SegmentedVirtualFile
 
 class Decryptor(object):
     
@@ -162,7 +165,14 @@ class Decryptor(object):
             
     def __decryptFileToDestination(self, encryptedFullPath, destinationPath):
         chunkSize = 4096
-        encryptedVirtualFile = VirtualFile(encryptedFullPath)
+        encryptedVirtualFile = None
+        
+        filename, segmentNumber = FilenameUtils.splitSegmentedFileName(encryptedFullPath)
+        if segmentNumber is None:
+            encryptedVirtualFile = VirtualFile(encryptedFullPath)
+        else:
+            encryptedVirtualFile = SegmentedVirtualFile(filename)
+            
         try:
             decryptedFileSize = self.decryptor.decryptedFileSize(encryptedVirtualFile)
             with open(destinationPath, 'wb') as destinationFile:    
@@ -190,26 +200,37 @@ class Decryptor(object):
             
     def __initializeFileBrowser(self, decryption, encryptedDir, parent=''):
         for entry in os.listdir(encryptedDir):
-            decryptedName = decryption.decryptFileName(entry)
-            encryptedFullPath = os.path.join(encryptedDir, entry)
+
+            # Check if file is segmented
+            filename, segment = FilenameUtils.splitSegmentedFileName(entry)
+            if segment is not None and segment is not 0:
+                continue
+            
+            encryptedFullPathForEntry = os.path.join(encryptedDir, entry)
+            decryptedName = decryption.decryptFileName(filename)
 
             identifier = None
-            printableModificationDate = datetime.fromtimestamp(os.path.getmtime(encryptedFullPath)).strftime('%Y-%m-%d %H:%M:%S')
-            fileSize = os.path.getsize(encryptedFullPath)
+            printableModificationDate = datetime.fromtimestamp(os.path.getmtime(encryptedFullPathForEntry)).strftime('%Y-%m-%d %H:%M:%S')
+            fileSize = None
 
-            if os.path.isfile(encryptedFullPath):
-                encryptedVirtualFile = VirtualFile(encryptedFullPath)
+            if os.path.isfile(encryptedFullPathForEntry):
+                encryptedVirtualFile = None
+                if segment is not None:
+                    encryptedVirtualFile = SegmentedVirtualFile(os.path.join(encryptedDir, filename))
+                else:
+                    encryptedVirtualFile = VirtualFile(encryptedFullPathForEntry)
                 fileSize = decryption.decryptedFileSize(encryptedVirtualFile)
                 encryptedVirtualFile.closeFileHandle()
                 identifier = self.fileBrowser.insert(parent, 'end', text=decryptedName)
             else:
                 identifier = self.fileBrowser.insert(parent, 'end', text=decryptedName)
-                self.__initializeFileBrowser(decryption, encryptedFullPath, identifier)
+                self.__initializeFileBrowser(decryption, encryptedFullPathForEntry, identifier)
+                fileSize = os.path.getsize(encryptedFullPathForEntry)
                 
             self.fileBrowser.set(identifier, 'size', hurry.filesize.size(fileSize))
             self.fileBrowser.set(identifier, 'modified', printableModificationDate)
             self.fileBrowser.set(identifier, 'encrypted name', entry)
-            self.fileBrowserShadowInformation[identifier] = encryptedFullPath
+            self.fileBrowserShadowInformation[identifier] = encryptedFullPathForEntry
             
 
 def main():
