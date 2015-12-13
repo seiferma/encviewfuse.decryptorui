@@ -9,7 +9,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='encviewfuse_decryptorui',
-    version='0.4.0',
+    version='0.4.0.post1',
     description='A UI for decrypting directories and files encrypted with encviewfuse_decryptorui.',
     long_description=long_description,
     url='https://github.com/seiferma/encviewfuse_decryptorui',
